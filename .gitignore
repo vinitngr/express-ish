@@ -30,3 +30,6 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+WORKING
+feat: add minimal express-ish router with single entry-point request dispatch
