@@ -21,13 +21,22 @@ func New(opts ...Options) *App {
 
 func (a *App) Listen() error {
 	addr := a.opts.Addr
-	a.mux.Handle("/", http.HandlerFunc(a.serve))
 	if addr == "" {
 		addr = ":8080"
 	}
 
+	a.mux.Handle("/", http.HandlerFunc(a.serve))
+
+	srv := &http.Server{
+		Addr:         addr,
+		Handler:      a.mux,
+		ReadTimeout:  a.opts.ReadTimeout,
+		WriteTimeout: a.opts.WriteTimeout,
+		IdleTimeout:  a.opts.IdleTimeout,
+	}
+
 	fmt.Println("listening on", addr)
-	return http.ListenAndServe(addr, a.mux)
+	return srv.ListenAndServe()
 }
 
 type paramsKey struct{}

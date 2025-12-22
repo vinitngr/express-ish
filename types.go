@@ -1,6 +1,9 @@
 package expressish
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type Handler func(*Ctx)
 
@@ -16,7 +19,10 @@ type Route struct {
 }
 
 type Options struct {
-	Addr string
+	Addr         string
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	IdleTimeout  time.Duration
 }
 
 type App struct {

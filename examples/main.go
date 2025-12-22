@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	expressish "github.com/vinitngr/express-ish"
 	"github.com/vinitngr/express-ish/middleware"
@@ -17,9 +18,12 @@ func Auth(c *expressish.Ctx, next expressish.Next) {
 	}
 	next()
 }
+
 func main() {
 	app := expressish.New(expressish.Options{
-		Addr: ":8080",
+		Addr:         ":8080",
+		ReadTimeout:  3 * time.Second,
+		WriteTimeout: 3 * time.Second,
 	})
 
 	app.Use(middleware.Logger)
@@ -32,6 +36,11 @@ func main() {
 	}))
 
 	app.Use(middleware.Recovery)
+
+	app.Get("/timeout", func(c *expressish.Ctx) {
+		time.Sleep(10 * time.Second)
+		c.Text(200, "you should never see this")
+	})
 
 	app.Get("/health", func(c *expressish.Ctx) {
 		c.Text(200, "ok")
