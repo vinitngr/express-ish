@@ -60,16 +60,16 @@ func (a *App) serve(w http.ResponseWriter, r *http.Request) {
 
 		if matched {
 			ctx := &Ctx{
-				W:      w,
-				R:      r,
+				w:      w,
+				r:      r,
 				params: params,
 			}
 			route.handler(ctx)
 			return
 		}
-
-		http.NotFound(w, r)
 	}
+
+	http.NotFound(w, r)
 }
 
 func clearPath(p string) string {
