@@ -2,6 +2,7 @@ package expressish
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -119,31 +120,30 @@ func (c *Ctx) Redirect(url string, code ...int) {
 	http.Redirect(c.w, c.r, url, status)
 }
 
-func (c *Ctx) Body() map[string]any {
-	if c.body != nil {
-		return c.body
-	}
-
-	c.body = make(map[string]any)
-
+func (c *Ctx) Body(dst any) error {
 	if c.r.Body == nil {
-		return c.body
+		return nil
 	}
 
 	ct := c.r.Header.Get("Content-Type")
 
 	switch {
 	case strings.HasPrefix(ct, "application/json"):
-		_ = json.NewDecoder(c.r.Body).Decode(&c.body)
+		dec := json.NewDecoder(c.r.Body)
+		dec.DisallowUnknownFields()
+		return dec.Decode(dst)
 
 	case strings.HasPrefix(ct, "application/x-www-form-urlencoded"):
-		_ = c.r.ParseForm()
-		for k, v := range c.r.PostForm {
-			if len(v) > 0 {
-				c.body[k] = v[0]
-			}
+		if err := c.r.ParseForm(); err != nil {
+			return err
 		}
+
+		b, err := json.Marshal(c.r.PostForm)
+		if err != nil {
+			return err
+		}
+		return json.Unmarshal(b, dst)
 	}
 
-	return c.body
+	return fmt.Errorf("unsupported content-type: %s", ct)
 }

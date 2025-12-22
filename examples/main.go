@@ -30,7 +30,7 @@ func main() {
 	app.Use(middleware.CORS([]string{
 		"http://localhost:3000",
 	}))
-	
+
 	app.Use(middleware.Recovery)
 
 	app.Get("/health", func(c *expressish.Ctx) {
@@ -65,9 +65,17 @@ func main() {
 				return
 			}
 
-			body := c.Body()
-			action, ok := body["action"].(string)
-			if !ok || action == "" {
+			type ActionReq struct {
+				Action string `json:"action" form:"action"`
+			}
+
+			var body ActionReq
+			if err := c.Body(&body); err != nil {
+				c.Text(400, err.Error())
+				return
+			}
+
+			if body.Action == "" {
 				c.Text(400, "missing action")
 				return
 			}
@@ -77,7 +85,7 @@ func main() {
 				c.Set("X-Debug-Mode", "true")
 			}
 
-			if action == "redirect" {
+			if body.Action == "redirect" {
 				c.Redirect("/health", 302)
 				return
 			}
@@ -86,7 +94,7 @@ func main() {
 				"id":     id,
 				"mode":   mode,
 				"debug":  debug == "1",
-				"action": action,
+				"action": body.Action,
 			})
 		},
 	)
