@@ -4,11 +4,15 @@ import "net/http"
 
 type Handler func(*Ctx)
 
+type Next func()
+type Middleware func(*Ctx, Next)
+
 type Route struct {
 	method  string
 	path    string
 	handler Handler
-	parts []string
+	parts   []string
+	mws     []Middleware
 }
 
 type Options struct {
@@ -18,5 +22,6 @@ type Options struct {
 type App struct {
 	opts   Options
 	routes []Route
-	mux *http.ServeMux
+	mws    []Middleware
+	mux    *http.ServeMux
 }
