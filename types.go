@@ -2,12 +2,13 @@ package expressish
 
 import "net/http"
 
-type Handler func(http.ResponseWriter, *http.Request)
+type Handler func(*Ctx)
 
 type Route struct {
 	method  string
 	path    string
 	handler Handler
+	parts []string
 }
 
 type Options struct {

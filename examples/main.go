@@ -1,24 +1,19 @@
 package main
 
-import (
-	"fmt"
-	"net/http"
-	"github.com/vinitngr/express-ish"
-)
+import expressish "github.com/vinitngr/express-ish"
 
 func main() {
 	app := expressish.New(expressish.Options{
 		Addr: ":8080",
 	})
 
-	app.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("health handler hit")
-		w.Write([]byte("ok"))
+	app.Get("/health", func(c *expressish.Ctx) {
+		c.Text(200, "ok")
 	})
 
-	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("root handler hit")
-		w.Write([]byte("hello"))
+	app.Get("/users/:id", func(c *expressish.Ctx) {
+		id := c.Param("id")
+		c.Text(200, "user "+id)
 	})
 
 	app.Listen()
