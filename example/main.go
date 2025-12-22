@@ -55,7 +55,7 @@ func main() {
 	log.Printf("Try visiting: http://localhost%s/\n", addr)
 	log.Printf("              http://localhost%s/hello\n", addr)
 	log.Printf("              http://localhost%s/users\n", addr)
-	
+
 	if err := http.ListenAndServe(addr, router); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}

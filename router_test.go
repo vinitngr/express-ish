@@ -227,7 +227,7 @@ func TestServeHTTP_MultipleRoutes(t *testing.T) {
 
 func TestServeHTTP_ImplementsHTTPHandler(t *testing.T) {
 	router := New()
-	
+
 	// Verify that Router implements http.Handler interface
 	var _ http.Handler = router
 }
