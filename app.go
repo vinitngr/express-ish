@@ -182,3 +182,4 @@ func Param(r *http.Request, key string) (string, bool) {
 func (a *App) Use(mw Middleware) {
 	a.mws = append(a.mws, mw)
 }
+

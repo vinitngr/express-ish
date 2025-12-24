@@ -152,3 +152,11 @@ func (c *Ctx) Cookie(cookie *http.Cookie) *Ctx {
 	http.SetCookie(c.w, cookie)
 	return c
 }
+
+func (c *Ctx) Res() http.ResponseWriter {
+	return c.w
+}
+
+func (c *Ctx) Req() *http.Request {
+	return c.r
+}
