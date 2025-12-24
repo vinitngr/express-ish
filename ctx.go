@@ -71,6 +71,7 @@ func (c *Ctx) Get(key string) (any, bool) {
 	return v, ok
 }
 
+
 func (c *Ctx) Header(key, val string) {
 	c.w.Header().Set(key, val)
 }
@@ -83,14 +84,13 @@ func (c *Ctx) Type(ct string) {
 	c.Header("Content-Type", ct)
 }
 
-func (c *Ctx) Status(code int) {
-	if c.wroteHeader {
-		return
+func (c *Ctx) Status(code int) *Ctx {
+	if !c.wroteHeader {
+		c.w.WriteHeader(code)
+		c.wroteHeader = true
 	}
-	c.w.WriteHeader(code)
-	c.wroteHeader = true
+	return c
 }
-
 func (c *Ctx) Text(code int, msg string) {
 	c.Type("text/plain; charset=utf-8")
 	c.Status(code)
@@ -146,4 +146,9 @@ func (c *Ctx) Body(dst any) error {
 	}
 
 	return fmt.Errorf("unsupported content-type: %s", ct)
+}
+
+func (c *Ctx) Cookie(cookie *http.Cookie) *Ctx {
+	http.SetCookie(c.w, cookie)
+	return c
 }
